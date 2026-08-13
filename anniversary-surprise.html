@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Anniversary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,500;1,9..144,600&family=Space+Mono:wght@400;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum:#2B0B3F;
+    --plum-deep:#1A0729;
+    --coral:#FF5A5F;
+    --gold:#FFC857;
+    --tangerine:#FF8C42;
+    --cream:#FFF8F0;
+    --pink:#FFD6E8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--plum-deep);
+    color:var(--cream);
+    font-family:'Work Sans',sans-serif;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--coral);color:var(--cream);}
+
+  /* ---------- EDITABLE CONTENT NOTE ---------- */
+  .edit-note{
+    position:fixed;top:0;left:0;right:0;z-index:999;
+    background:var(--gold);color:var(--plum-deep);
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.03em;
+    text-align:center;padding:6px 10px;
+  }
+
+  /* ---------- ENVELOPE INTRO ---------- */
+  .envelope-screen{
+    position:fixed;inset:0;z-index:100;
+    background:linear-gradient(160deg,var(--plum) 0%,var(--plum-deep) 100%);
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:28px;
+    transition:opacity .9s ease, visibility .9s ease;
+  }
+  .envelope-screen.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+  .envelope{
+    width:220px;height:150px;position:relative;cursor:pointer;
+  }
+  .envelope-body{
+    position:absolute;inset:0;
+    background:var(--coral);
+    border-radius:6px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .envelope-flap{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    background:var(--tangerine);
+    clip-path:polygon(0 0,50% 55%,100% 0);
+    transform-origin:top;
+    transition:transform .6s cubic-bezier(.7,0,.3,1);
+    border-radius:6px 6px 0 0;
+  }
+  .envelope:hover .envelope-flap{transform:rotateX(-165deg);}
+  .envelope-seal{
+    position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);
+    width:46px;height:46px;border-radius:50%;
+    background:var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:700;font-style:italic;
+    color:var(--plum-deep);font-size:20px;
+    box-shadow:0 4px 10px rgba(0,0,0,.35);
+    z-index:2;
+  }
+  .envelope-hint{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--pink);opacity:.85;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:100px 24px 60px;
+    position:relative;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,140,66,.25), transparent 45%),
+      radial-gradient(circle at 80% 75%, rgba(255,90,95,.25), transparent 45%),
+      var(--plum-deep);
+  }
+  .stamp{
+    border:3px dashed var(--gold);
+    padding:22px 34px;
+    display:inline-flex;flex-direction:column;align-items:center;gap:4px;
+    transform:rotate(-4deg);
+    margin-bottom:36px;
+    background:rgba(255,200,87,.06);
+  }
+  .stamp .years{
+    font-family:'Fraunces',serif;font-weight:900;font-size:clamp(48px,9vw,96px);
+    line-height:.9;color:var(--gold);
+  }
+  .stamp .years-label{
+    font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.25em;
+    text-transform:uppercase;color:var(--pink);
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+    font-size:clamp(32px,6vw,64px);
+    color:var(--cream);
+    max-width:16ch;line-height:1.1;
+  }
+  .hero .names{
+    margin-top:22px;
+    font-family:'Space Mono',monospace;
+    font-size:14px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--coral);
+  }
+  .scroll-cue{
+    position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    color:var(--pink);opacity:.6;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+  }
+  .scroll-cue span{
+    width:1px;height:30px;background:var(--pink);
+    animation:pulse 1.8s infinite ease-in-out;
+  }
+  @keyframes pulse{0%,100%{opacity:.2}50%{opacity:.9}}
+
+  /* ---------- TIMELINE (the road) ---------- */
+  .timeline-section{
+    padding:100px 24px 140px;
+    position:relative;
+    max-width:760px;margin:0 auto;
+  }
+  .section-eyebrow{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.25em;
+    text-transform:uppercase;color:var(--gold);text-align:center;
+    margin-bottom:10px;
+  }
+  .section-title{
+    font-family:'Fraunces',serif;font-weight:700;text-align:center;
+    font-size:clamp(28px,4.5vw,44px);margin-bottom:80px;color:var(--cream);
+  }
+  .road{
+    position:absolute;left:50%;top:210px;bottom:80px;
+    width:2px;
+    background:repeating-linear-gradient(to bottom, var(--coral) 0 10px, transparent 10px 20px);
+    transform:translateX(-50%);
+  }
+  .stop{
+    position:relative;
+    display:flex;margin-bottom:80px;
+    opacity:0;transform:translateY(24px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .stop.visible{opacity:1;transform:translateY(0);}
+  .stop:nth-child(odd){justify-content:flex-start;}
+  .stop:nth-child(even){justify-content:flex-end;}
+  .postmark{
+    position:absolute;left:50%;top:6px;transform:translateX(-50%);
+    width:34px;height:34px;border-radius:50%;
+    background:var(--plum-deep);border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Mono',monospace;font-size:14px;color:var(--gold);
+    z-index:2;
+  }
+  .stop-card{
+    width:calc(50% - 50px);
+    background:rgba(255,248,240,.04);
+    border:1px solid rgba(255,200,87,.25);
+    border-radius:14px;
+    padding:24px 26px;
+  }
+  .stop-date{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--tangerine);margin-bottom:8px;
+  }
+  .stop-title{
+    font-family:'Fraunces',serif;font-weight:600;font-size:22px;
+    color:var(--cream);margin-bottom:8px;
+  }
+  .stop-text{
+    font-size:15px;line-height:1.6;color:var(--pink);
+  }
+
+  /* ---------- LETTER ---------- */
+  .letter-section{
+    background:var(--plum);
+    padding:110px 24px;
+    display:flex;justify-content:center;
+  }
+  .letter{
+    max-width:620px;
+    background:var(--cream);
+    color:var(--plum-deep);
+    border-radius:4px;
+    padding:56px 48px;
+    position:relative;
+    box-shadow:0 30px 70px rgba(0,0,0,.4);
+    transform:rotate(-.6deg);
+  }
+  .letter::before{
+    content:'';position:absolute;top:-14px;right:40px;
+    width:60px;height:60px;border-radius:50%;
+    background:var(--coral);
+    box-shadow:0 6px 14px rgba(0,0,0,.3);
+  }
+  .letter-greeting{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:600;
+    font-size:26px;margin-bottom:24px;color:var(--coral);
+  }
+  .letter-body p{
+    font-size:16px;line-height:1.85;margin-bottom:18px;
+    color:#3a1f4d;
+  }
+  .letter-sign{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:700;
+    font-size:22px;margin-top:20px;color:var(--coral);
+  }
+
+  /* ---------- CLOSING ---------- */
+  .closing{
+    min-height:70vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:80px 24px;gap:20px;
+    background:var(--plum-deep);
+  }
+  .closing .years{
+    font-family:'Fraunces',serif;font-weight:900;font-style:italic;
+    font-size:clamp(40px,8vw,80px);color:var(--gold);
+  }
+  .closing p{
+    font-family:'Space Mono',monospace;font-size:13px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--pink);
+  }
+
+  @media (max-width:640px){
+    .road{left:22px;}
+    .postmark{left:22px;}
+    .stop{justify-content:flex-end !important;}
+    .stop-card{width:calc(100% - 60px);}
+  }
+
+  :focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="envelope-screen" id="envelopeScreen">
+  <div class="envelope" id="envelope">
+    <div class="envelope-body"></div>
+    <div class="envelope-seal">❤</div>
+    <div class="envelope-flap"></div>
+  </div>
+  <div class="envelope-hint">tap the envelope</div>
+</div>
+
+<section class="hero">
+  <div class="stamp">
+    <div class="years">5</div>
+    <div class="years-label">years together</div>
+  </div>
+  <h1>From a college road to forever &mdash; five years, still my favorite ride.</h1>
+  <div class="names">Mahi &amp; Badsha</div>
+  <div class="scroll-cue"><span></span>scroll</div>
+</section>
+
+<section class="timeline-section">
+  <div class="section-eyebrow">The story so far</div>
+  <div class="section-title">Our Timeline</div>
+  <div class="road"></div>
+
+  <div class="stop">
+    <div class="postmark">1</div>
+    <div class="stop-card">
+      <div class="stop-date">January 2021</div>
+      <div class="stop-title">The Beginning</div>
+      <div class="stop-text">It started online, of all places &mdash; no grand meet-cute, just a conversation that wouldn't stop. Sometimes the simplest beginnings turn into the best stories.</div>
+    </div>
+  </div>
+
+  <div class="stop">
+    <div class="postmark">2</div>
+    <div class="stop-card">
+      <div class="stop-date">January 23, 2021</div>
+      <div class="stop-title">First Date</div>
+      <div class="stop-text">College road, a bike, and a ride to a little restaurant in Lalpol. No plan, no pressure &mdash; just two people figuring out this was the beginning of something real.</div>
+    </div>
+  </div>
+
+  <div class="stop">
+    <div class="postmark">3</div>
+    <div class="stop-card">
+      <div class="stop-date">August 14, 2021</div>
+      <div class="stop-title">The Secret Wedding</div>
+      <div class="stop-text">At the Kaji office, just the two of them and a promise no one else knew about yet. The quietest "yes" that changed everything.</div>
+    </div>
+  </div>
+
+  <div class="stop">
+    <div class="postmark">★</div>
+    <div class="stop-card">
+      <div class="stop-date">Today</div>
+      <div class="stop-title">5 Years Later</div>
+      <div class="stop-text">From a college road to a shared life &mdash; still choosing each other, five years and counting.</div>
+    </div>
+  </div>
+</section>
+
+<section class="letter-section">
+  <div class="letter">
+    <div class="letter-greeting">My dearest Badsha,</div>
+    <div class="letter-body">
+      <p>Five years ago today, we made a promise to each other with no one else in the room to witness it. I've never once regretted keeping that secret, because it was ours before it was anyone else's business.</p>
+      <p>I still think about that bike ride down college road more than you'd guess &mdash; how something that started online turned into someone I can't imagine my life without. You have a way of making ordinary days feel like they matter, and I don't think you even notice you're doing it.</p>
+      <p>Here's to every road we haven't ridden yet, and to choosing you again, every year, on purpose.</p>
+    </div>
+    <div class="letter-sign">Forever yours,<br>Mahi</div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="years">Happy Anniversary</div>
+  <p>Badsha &amp; Mahi · 5 Years</p>
+</section>
+
+<script>
+  const envelope = document.getElementById('envelope');
+  const screen = document.getElementById('envelopeScreen');
+  envelope.addEventListener('click', () => {
+    screen.classList.add('hidden');
+  });
+
+  const stops = document.querySelectorAll('.stop');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.2 });
+  stops.forEach(s => io.observe(s));
+</script>
+
+</body>
+</html>
